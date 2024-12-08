@@ -81,13 +81,13 @@ Maturity and harvest management in coconut farming using technologies like deep 
 Utilize super-resolution technology to enhance image quality, improving accuracy in identifying and managing mite infestations in coconut plantations.
 
 # Leaf Disease Ditection: Gunarathne M. M. S. U
-
+Integrate saliency mapping and Explainable AI (XAI) to provide transparent disease identification and actionable insights for effective management.
 
 # IOt Based Fertilizer Recomondation: Adithya E.L.A.Y
 Create a model for Giving the Fertilizer Recommendation to increase the soil fertility for Sri Lankan coconut farming
 
 # Maturity Ditection: Silva T. C. D
-
+Leverage predictive analysis to determine coconut maturity stages and optimal harvest times, to get maximum yield and improving plantation efficiency.
 
 ## Git repository link
 
