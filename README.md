@@ -1,18 +1,18 @@
 
 # Deep Learning of Coconut Diseases and Fertility Check "CocoGuard"
 
-# Team Members
+## Team Members
 
-Group Leader: IT21348648- R. C Balasooriya
-Member 1: IT21193736- Adithya E.L.A.Y
-Member 2: IT21305696- Gunarathne M. M. S. U.
-Member 3: IT21296933- Silva T. C. D.
+ 1. **Group Leader:** IT21348648- R. C Balasooriya
+ 2. **Member 1:** IT21193736- Adithya E.L.A.Y
+ 3. **Member 2:** IT21305696- Gunarathne M. M. S. U.
+ 4. **Member 3:** IT21296933- Silva T. C. D.
 
 ## Overview
 
 Coconut cultivation is vital to Sri Lanka's economy, supporting rural livelihoods and contributing significantly to the agro-economy. However, challenges such as declining productivity, quality issues, and inefficient management practices impact profitability and sustainability. Existing methods often lack real-time data integration and advanced technologies to address these gaps effectively.
 
-Our research introduces an innovative solution to enhance coconut cultivation through four components: *disease detection and management, **coconut quality enhancement, **soil fertility management, and **maturity and harvest prediction*. Novel approaches, such as saliency mapping and explainable AI, improve early detection of gray leaf spot and other diseases. Super-resolution imaging refines disease identification, enabling timely interventions. Real-time NPK sensor data ensures precise soil fertility recommendations, while drone imagery and predictive analytics facilitate accurate maturity identification and efficient harvest planning.
+Our research introduces an innovative solution to enhance coconut cultivation through four components: disease detection and management, coconut quality enhancement, soil fertility management, and maturity and harvest prediction. Novel approaches, such as saliency mapping and explainable AI, improve early detection of gray leaf spot and other diseases. Super-resolution imaging refines disease identification, enabling timely interventions. Real-time NPK sensor data ensures precise soil fertility recommendations, while drone imagery and predictive analytics facilitate accurate maturity identification and efficient harvest planning.
 
 By integrating real-time data, advanced imaging, and predictive models, our system offers a comprehensive approach to improving coconut plantation management. This dynamic solution bridges existing gaps, addressing productivity, quality, and resource optimization challenges, thereby fostering sustainable and profitable coconut farming in Sri Lanka.
 
@@ -77,16 +77,16 @@ Maturity and harvest management in coconut farming using technologies like deep 
 
 ## Key Features
 
-# Coconut Pest Detection: R.C Balasooriya
+**Coconut Pest Detection: R.C Balasooriya**
 Utilize super-resolution technology to enhance image quality, improving accuracy in identifying and managing mite infestations in coconut plantations.
 
-# Leaf Disease Ditection: Gunarathne M. M. S. U
+**Leaf Disease Ditection: Gunarathne M. M. S. U**
 Integrate saliency mapping and Explainable AI (XAI) to provide transparent disease identification and actionable insights for effective management.
 
-# IOt Based Fertilizer Recomondation: Adithya E.L.A.Y
+**IOt Based Fertilizer Recomondation: Adithya E.L.A.Y**
 Create a model for Giving the Fertilizer Recommendation to increase the soil fertility for Sri Lankan coconut farming
 
-# Maturity Ditection: Silva T. C. D
+**Maturity Ditection: Silva T. C. D**
 Leverage predictive analysis to determine coconut maturity stages and optimal harvest times, to get maximum yield and improving plantation efficiency.
 
 ## Git repository link
