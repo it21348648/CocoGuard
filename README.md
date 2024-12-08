@@ -1,9 +1,6 @@
 
 # Welcome to your Expo app 👋
 
-
-![image alt](https://github.com/it21348648/CocoGuard/blob/a660b8e4a5b636030ee10325769126e46df0748e/System%20Diagram.png)
-
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
