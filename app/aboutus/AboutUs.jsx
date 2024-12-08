@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from "react-native";
 export default function AboutUs() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Services Screen</Text>
+      <Text style={styles.text}>About Us</Text>
     </View>
   );
 }

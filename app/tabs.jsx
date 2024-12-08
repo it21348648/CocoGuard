@@ -5,8 +5,10 @@ import { Ionicons } from "@expo/vector-icons";
 import Home from "./home/Home"; // Home screen
 import AboutUs from "./aboutus/AboutUs"; // About Us screen
 import ContactUs from "./contactus/ContactUs"; // Contact Us screen
+import CoconutDisease from "./coconutdisease/CoconutDisease"; // Coconut Disease screen
 
 const Tab = createBottomTabNavigator();
+
 
 export default function Tabs() {
   return (
@@ -33,6 +35,8 @@ export default function Tabs() {
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="ContactUs" component={ContactUs} />
       <Tab.Screen name="AboutUs" component={AboutUs} />
+      
+      
     </Tab.Navigator>
   );
 }
