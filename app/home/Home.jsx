@@ -8,9 +8,14 @@ import {
   ScrollView,
   Image,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context"; // Import SafeAreaView
+import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation for navigation
 
 export default function Home() {
+  const router = useRouter(); // Initialize router
   return (
+    <SafeAreaView style={styles.safeArea}>
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Hi Wilson! 👋</Text>
@@ -38,14 +43,18 @@ export default function Home() {
 
       <Text style={styles.featuredTitle}>Featured Products</Text>
       <View style={styles.products}>
-        <View style={styles.productCard}>
-          <Image
-            source={require("../assets/Coconutnut.jpg")}
-            style={styles.productImage}
-          />
-          <Text style={styles.productName}>Cocont Disease</Text>
-          <Text style={styles.productPrice}>Scan</Text>
-        </View>
+        {/* Coconut Disease Card */}
+        <TouchableOpacity
+            style={styles.productCard}
+            onPress={() => router.push("/coconutdisease/CoconutDisease")} // Navigate to Coconut Disease
+          >
+            <Image
+              source={require("../assets/Coconutnut.jpg")}
+              style={styles.productImage}
+            />
+            <Text style={styles.productName}>Coconut Disease</Text>
+            <Text style={styles.productPrice}>Scan</Text>
+          </TouchableOpacity>
         <View style={styles.productCard}>
           <Image
             source={require("../assets/Coconut Leafe.jpg")}
@@ -73,10 +82,15 @@ export default function Home() {
         {/* Add more product cards as needed */}
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1, // Make the SafeAreaView fill the screen
+    backgroundColor: "#4CAF50", // Match the background color of your app
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
