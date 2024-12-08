@@ -1,10 +1,18 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
+import { useRouter } from "expo-router";
 
-export default function Home() {
+export default function Index() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to CocoGuard!</Text>
+      <Text style={styles.title}>Welcome to CocoGuard!</Text>
+      <Button
+        title="Get Started"
+        onPress={() => router.push("/home/Home")}
+        color="#4CAF50"
+      />
     </View>
   );
 }
@@ -14,11 +22,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#F3F4F6",
   },
-  text: {
-    fontSize: 20,
+  title: {
+    fontSize: 24,
     fontWeight: "bold",
     color: "#333",
+    marginBottom: 20,
   },
 });
