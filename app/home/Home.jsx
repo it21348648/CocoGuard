@@ -51,7 +51,7 @@ export default function Home() {
             source={require("../assets/Coconut Leafe.jpg")}
             style={styles.productImage}
           />
-          <Text style={styles.productName}>Leafe Disease</Text>
+          <Text style={styles.productName}>Leaf Disease</Text>
           <Text style={styles.productPrice}>Scan</Text>
         </View>
         <View style={styles.productCard}>

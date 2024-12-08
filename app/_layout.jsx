@@ -5,7 +5,7 @@ export default function Layout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: false, // Optional: Customize headers
+        headerShown: false, // Hide headers globally
       }}
     />
   );
