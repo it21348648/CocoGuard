@@ -93,10 +93,18 @@ export default function LeafDiseaseUpload() {
             </View>
           </Modal>
 
-          <Text style={styles.descriptionTitle}>Description</Text>
+          <Text style={styles.descriptionTitle}>Why Your Coconut Leaves Health is important?</Text>
           <Text style={styles.description}>
-            Detect common leaf diseases early and prevent significant crop losses with timely interventions.
+          Healthy coconut leaves ensure proper growth and higher yields. Early detection of issues like gray leaf disease or whiteflies helps prevent damage and maintain a productive harvest.
           </Text>
+
+          <Text style={styles.descriptionTitle}>Tips for Monitoring Coconut Leaf Health</Text>
+          <Text style={styles.description}>
+               1. Look for Early Signs{"\n"}
+               2. Monitor Regularly{"\n"}
+               3. Prune Damaged Leaves{"\n"}
+               4. Provide Proper Nutrition          
+               </Text>
 
           <Text style={styles.relatedTitle}>Related Products</Text>
           <ScrollView horizontal style={styles.relatedProducts}>
@@ -158,7 +166,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: "#555",
+    fontWeight: "semibold",
     marginBottom: 16,
   },
   relatedTitle: {
