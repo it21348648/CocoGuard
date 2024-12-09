@@ -9,9 +9,12 @@ import {
   Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 export default function LeafDiseaseUpload() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [isHovered, setIsHovered] = useState(false); // State to manage hover effect
+  const router = useRouter();
 
   const openModal = () => {
     setModalVisible(true);
@@ -25,7 +28,7 @@ export default function LeafDiseaseUpload() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
         <Image
-          source={require("../assets/Coconut Leafe.jpg")} // Replace with your leaf disease image
+          source={require("../assets/Coconut Leafe.jpg")} 
           style={styles.image}
         />
         <View style={styles.content}>
@@ -73,7 +76,13 @@ export default function LeafDiseaseUpload() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[styles.modalButton, styles.cancelButton]}
+                  style={[
+                    styles.modalButton,
+                    styles.cancelButton,
+                    isHovered && styles.cancelButtonHovered, // Apply hover effect
+                  ]}
+                  onPressIn={() => setIsHovered(true)}
+                  onPressOut={() => setIsHovered(false)}
                   onPress={closeModal}
                 >
                   <Text style={[styles.modalButtonText, styles.cancelText]}>
@@ -104,6 +113,14 @@ export default function LeafDiseaseUpload() {
               style={styles.relatedImage}
             />
           </ScrollView>
+
+          {/* Navigation Button to LeafPredict */}
+          <TouchableOpacity
+            style={styles.navigationButton}
+            onPress={() => router.push("/leafdisease/LeafPredict")}
+          >
+            <Text style={styles.navigationButtonText}>Go to Prediction</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -113,7 +130,7 @@ export default function LeafDiseaseUpload() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#4CAF50", // Add a background color for the safe area
+    backgroundColor: "#4CAF50",
   },
   container: {
     flex: 1,
@@ -176,7 +193,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
     width: "80%",
@@ -210,9 +227,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   cancelButton: {
-    backgroundColor: "#f5f5f5", // Different background for cancel button
+    backgroundColor: "#f5f5f5",
+  },
+  cancelButtonHovered: {
+    backgroundColor: "#FF6F6F",
   },
   cancelText: {
-    color: "#555", // Different text color for cancel button
+    color: "#555",
+  },
+  navigationButton: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: "#4CAF50",
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  navigationButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

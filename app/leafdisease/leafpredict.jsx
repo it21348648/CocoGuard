@@ -1,81 +1,92 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
-export default function LeafPredictScreen({ onNavigateBack }) {
+export default function LeafPredict() {
+  const router = useRouter();
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <View style={{ padding: 20 }}>
-        <Image
-          source={require('../assets/images/coconut-header.jpg')} // Replace with your header image
-          style={{
-            width: '100%',
-            height: 200,
-            resizeMode: 'cover',
-            borderRadius: 10,
-            marginBottom: 20,
-          }}
-        />
-        <Text
-          style={{
-            fontSize: 24,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            color: '#006F3B',
-            marginBottom: 20,
-          }}
-        >
-          Coconut Disease Diagnosis
-        </Text>
-        <Image
-          source={require('../assets/images/unhealthy01.jpg')} // Replace with your disease image
-          style={{
-            width: '100%',
-            height: 200,
-            resizeMode: 'contain',
-            borderRadius: 10,
-            marginBottom: 20,
-          }}
-        />
-        <TouchableOpacity
-          style={{
-            backgroundColor: '#FF6F6F',
-            paddingVertical: 15,
-            borderRadius: 10,
-            alignItems: 'center',
-            marginBottom: 20,
-          }}
-        >
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Preview</Text>
-        </TouchableOpacity>
-        <View
-          style={{
-            backgroundColor: '#F9F9F9',
-            padding: 15,
-            borderRadius: 10,
-            marginBottom: 20,
-          }}
-        >
-          <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FF6F6F', marginBottom: 10 }}>
-            Disease Detected: Gray Leaf
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.title}>Prediction Results</Text>
+
+          {/* Add the unhealthy leaf image */}
+          <Image
+            source={require("../assets/unhealthyleaf.jpg")} // Replace with your actual path
+            style={styles.image}
+          />
+
+          <Text style={styles.description}>
+            The uploaded image indicates signs of leaf disease. Confidence level: 87%.
           </Text>
-          <Text style={{ color: '#4A4A4A', marginBottom: 10 }}>
-            Spots detected in the highlighted region match the pattern of gray leaf disease.
+          <Text style={styles.subTitle}>Suggested Actions:</Text>
+          <Text style={styles.description}>
+            1. Remove affected leaves promptly.{"\n"}
+            2. Use recommended fungicides.{"\n"}
+            3. Monitor other plants for early symptoms.
           </Text>
+
+          <TouchableOpacity
+            style={styles.navigationButton}
+            onPress={() => router.push("/leafdisease/LeafDiseaseUpload")}
+          >
+            <Text style={styles.navigationButtonText}>Go Back to Upload</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={onNavigateBack}
-          style={{
-            backgroundColor: '#6FDB98',
-            paddingVertical: 15,
-            borderRadius: 10,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>
-            Go Back to Upload Screen
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#4CAF50",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  content: {
+    padding: 16,
+    alignItems: "center", // Center-align the content
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  image: {
+    width: 200, // Set the width of the image
+    height: 150, // Set the height of the image
+    resizeMode: "contain", // Keep the aspect ratio
+    marginBottom: 16,
+  },
+  subTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 16,
+    textAlign: "center", // Center-align the text
+  },
+  navigationButton: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: "#4CAF50",
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  navigationButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+});
