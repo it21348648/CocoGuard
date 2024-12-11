@@ -10,41 +10,40 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context"; // Import SafeAreaView
 import { useRouter } from "expo-router";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation for navigation
 
 export default function Home() {
   const router = useRouter(); // Initialize router
   return (
     <SafeAreaView style={styles.safeArea}>
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.greeting}>Hi Wilson! 👋</Text>
-        <Text style={styles.subtitle}>Enjoy our services!</Text>
-        <TouchableOpacity style={styles.notification}>
-          <Text>🔔</Text>
-        </TouchableOpacity>
-      </View>
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.greeting}>Hi Wilson! 👋</Text>
+          <Text style={styles.subtitle}>Enjoy our services!</Text>
+          <TouchableOpacity style={styles.notification}>
+            <Text>🔔</Text>
+          </TouchableOpacity>
+        </View>
 
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search here..."
-        placeholderTextColor="#888"
-      />
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search here..."
+          placeholderTextColor="#888"
+        />
 
-      <View style={styles.consultation}>
-        <Text style={styles.consultationText}>Free Consultation</Text>
-        <Text style={styles.consultationSubtext}>
-          Get free support from our customer service
-        </Text>
-        <TouchableOpacity style={styles.callButton}>
-          <Text style={styles.callButtonText}>Call Now</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.consultation}>
+          <Text style={styles.consultationText}>Free Consultation</Text>
+          <Text style={styles.consultationSubtext}>
+            Get free support from our customer service
+          </Text>
+          <TouchableOpacity style={styles.callButton}>
+            <Text style={styles.callButtonText}>Call Now</Text>
+          </TouchableOpacity>
+        </View>
 
-      <Text style={styles.featuredTitle}>Featured Products</Text>
-      <View style={styles.products}>
-        {/* Coconut Disease Card */}
-        <TouchableOpacity
+        <Text style={styles.featuredTitle}>Featured Products</Text>
+        <View style={styles.products}>
+          {/* Coconut Disease Card */}
+          <TouchableOpacity
             style={styles.productCard}
             onPress={() => router.push("/coconutdisease/CoconutDisease")} // Navigate to Coconut Disease
           >
@@ -55,33 +54,42 @@ export default function Home() {
             <Text style={styles.productName}>Coconut Disease</Text>
             <Text style={styles.productPrice}>Scan</Text>
           </TouchableOpacity>
-        <View style={styles.productCard}>
-          <Image
-            source={require("../assets/Coconut Leafe.jpg")}
-            style={styles.productImage}
-          />
-          <Text style={styles.productName}>Leaf Disease</Text>
-          <Text style={styles.productPrice}>Scan</Text>
+          <TouchableOpacity
+            style={styles.productCard}
+            onPress={() => router.push("/leafdisease/LeafDiseaseUpload")} // Navigate to LeafDiseaseUpload
+          >
+            <Image
+              source={require("../assets/Coconut Leafe.jpg")}
+              style={styles.productImage}
+            />
+            <Text style={styles.productName}>Leaf Disease</Text>
+            <Text style={styles.productPrice}>Scan</Text>
+          </TouchableOpacity>
+
+          {/* Check Soil Card */}
+          <View style={styles.productCard}>
+            <Image
+              source={require("../assets/Soil.jpg")}
+              style={styles.productImage}
+            />
+            <Text style={styles.productName}>Check Soil</Text>
+            <Text style={styles.productPrice}>Scan</Text>
+          </View>
+
+          {/* Maturity Identification Card (Now Directs to Dashboard) */}
+          <TouchableOpacity
+            style={styles.productCard}
+            onPress={() => router.push("/coconutMaturity/DashboardScreen")} // Navigate to Dashboard
+          >
+            <Image
+              source={require("../assets/MaturityCom.jpg")}
+              style={styles.productImage}
+            />
+            <Text style={styles.productName}>Maturity Identification</Text>
+            <Text style={styles.productPrice}>Manage</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.productCard}>
-          <Image
-            source={require("../assets/Soil.jpg")}
-            style={styles.productImage}
-          />
-          <Text style={styles.productName}>Check Soil</Text>
-          <Text style={styles.productPrice}>Scan</Text>
-        </View>
-        <View style={styles.productCard}>
-          <Image
-            source={require("../assets/Maturity.jpg")}
-            style={styles.productImage}
-          />
-          <Text style={styles.productName}>Maturity Level</Text>
-          <Text style={styles.productPrice}>Scan</Text>
-        </View>
-        {/* Add more product cards as needed */}
-      </View>
-    </ScrollView>
+      </ScrollView>
     </SafeAreaView>
   );
 }
