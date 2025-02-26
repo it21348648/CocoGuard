@@ -9,9 +9,13 @@ import {
   Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router"; // Import useRouter
+
 
 export default function CoconutDisease() {
   const [modalVisible, setModalVisible] = useState(false);
+  const router = useRouter(); // Initialize the router
+
 
   const openModal = () => {
     setModalVisible(true);
@@ -109,9 +113,13 @@ export default function CoconutDisease() {
 
             
           </ScrollView>
-          <TouchableOpacity style={styles.addToCartButton}>
-              <Text style={styles.addToCartText}>Preview Next Page(Test button)</Text>
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.addToCartButton}
+            onPress={() => router.push("/coconutdisease/MitaAttack")} // Correct navigation
+          >
+            <Text style={styles.addToCartText}>Preview Next Page(Test button)</Text>
+          </TouchableOpacity>
+
         </View>
       </ScrollView>
     </SafeAreaView>
