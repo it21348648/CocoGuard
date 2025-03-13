@@ -55,13 +55,20 @@ export default function Home() {
             <Text style={styles.productName}>Coconut Disease</Text>
             <Text style={styles.productPrice}>Scan</Text>
           </TouchableOpacity>
-        <View style={styles.productCard}>
-          <Image
-            source={require("../assets/Coconut Leafe.jpg")}
-            style={styles.productImage}
-          />
-          <Text style={styles.productName}>Leaf Disease</Text>
-          <Text style={styles.productPrice}>Scan</Text>
+
+      <View style={styles.productCard}>
+        <TouchableOpacity
+            style={styles.productCard}
+            onPress={() => router.push("/leafdiseases/LeafDiseaseUpload")}
+          >
+            <Image
+              source={require("../assets/Coconut Leafe.jpg")}
+              style={styles.productImage}
+            />
+            <Text style={styles.productName}>Leaf Disease</Text>
+            <Text style={styles.productPrice}>Scan</Text>
+          </TouchableOpacity>
+          
         </View>
         <View style={styles.productCard}>
           <Image

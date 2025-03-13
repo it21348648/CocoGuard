@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from routes.super_res import super_res_bp  # Import the processing route
+from routes.xai import xai_bp
 import os
 
 app = Flask(__name__)
@@ -14,6 +15,7 @@ os.makedirs(RESULTS_FOLDER, exist_ok=True)
 
 # Register Blueprints
 app.register_blueprint(super_res_bp, url_prefix='/api')
+app.register_blueprint(xai_bp, url_prefix='/api')
 
 @app.route('/')
 def home():
@@ -21,3 +23,4 @@ def home():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+

@@ -5,8 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 import Home from "./home/Home"; // Home screen
 import AboutUs from "./aboutus/AboutUs"; // About Us screen
 import ContactUs from "./contactus/ContactUs"; // Contact Us screen
-import CoconutDisease from "./coconutdisease/CoconutDisease"; // Coconut Disease screen
-
 const Tab = createBottomTabNavigator();
 
 
