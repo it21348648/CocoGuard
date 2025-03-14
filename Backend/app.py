@@ -5,7 +5,9 @@ from routes.xai import xai_bp
 import os
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for cross-origin requests
+
+# Enable CORS for all routes
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Ensure required folders exist
 UPLOAD_FOLDER = "inputs"
@@ -22,5 +24,4 @@ def home():
     return {"message": "CocoGuard Backend API is running!"}, 200
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
-
+    app.run(debug=True, host="0.0.0.0", port=6000)  # Allow access from other devices
