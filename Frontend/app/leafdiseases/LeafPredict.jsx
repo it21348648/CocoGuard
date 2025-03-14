@@ -8,10 +8,29 @@ import {
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { API_BASE_URL } from "../../constants/config"; // Import API Base URL
 
 export default function LeafPredict() {
   const router = useRouter();
+  const { confidence, explanation, gradcamPath, limePath, prediction } = useLocalSearchParams();
+
+  // Convert confidence to percentage
+  const confidencePercentage = (parseFloat(confidence) * 100).toFixed(2); // Converts 0.97 to 97%
+
+  // Determine the disease label from the model prediction (not confidence)
+  let diseaseLabel;
+  if (explanation.includes("diseased")) {
+    diseaseLabel = "Gray Leaf";
+  } else if (explanation.includes("healthy")) {
+    diseaseLabel = "Healthy";
+  } else {
+    diseaseLabel = "Uncertain";
+  }
+
+  // Ensure paths are absolute URLs
+  const gradcamImageUrl = gradcamPath?.startsWith("http") ? gradcamPath : `${API_BASE_URL}/results/${gradcamPath}`;
+  const limeImageUrl = limePath?.startsWith("http") ? limePath : `${API_BASE_URL}/results/${limePath}`;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -19,56 +38,60 @@ export default function LeafPredict() {
         {/* Header with background image */}
         <View style={styles.header}>
           <Image
-            source={require("../assets/Coconut Leafe.jpg")} // Use the same background image
+            source={require("../assets/Coconut Leafe.jpg")}
             style={styles.headerBackground}
           />
           <Text style={styles.headerTitle}>Prediction Results</Text>
         </View>
 
         <View style={styles.content}>
-          {/* Placeholder Images for Saliency Mapping */}
+          {/* Image Comparison Section */}
           <View style={styles.imageComparison}>
             <View style={styles.imageBox}>
-              <Text style={styles.imageLabel}>Original Image</Text>
-              <Image
-                source={require("../assets/Soil.jpg")} // Replace with actual path
-                style={styles.image}
-              />
+              <Text style={styles.imageLabel}>Grad-Cam++ Image</Text>
+              {gradcamPath ? (
+                <Image source={{ uri: gradcamImageUrl }} style={styles.image} />
+              ) : (
+                <Text style={styles.imagePlaceholder}>No Image Available</Text>
+              )}
             </View>
             <View style={styles.divider} />
             <View style={styles.imageBox}>
-              <Text style={styles.imageLabel}>Saliency Map</Text>
-              <Image
-                source={require("../assets/Coconut Leafe.jpg")} // Replace with placeholder
-                style={styles.image}
-              />
+              <Text style={styles.imageLabel}>LIME Image</Text>
+              {limePath ? (
+                <Image source={{ uri: limeImageUrl }} style={styles.image} />
+              ) : (
+                <Text style={styles.imagePlaceholder}>No Image Available</Text>
+              )}
             </View>
           </View>
 
           {/* Explanation Section */}
           <View style={styles.explanationBox}>
             <Text style={styles.diseaseDetected}>
-              Disease Detected: <Text style={styles.diseaseName}>Gray Leaf</Text>
+              Detected: <Text style={styles.diseaseName}>{diseaseLabel}</Text>
             </Text>
-            <Text style={styles.description}>
-              The model highlights these regions as resembling patterns of gray
-              leaf disease with a confidence level of:
-            </Text>
+            <Text style={styles.description}>{explanation}</Text>
+
             <View style={styles.confidenceBarWrapper}>
               <View style={styles.confidenceBar}>
-                <View style={[styles.confidenceFill, { width: "87%" }]} />
+                <View style={[styles.confidenceFill, { width: `${confidencePercentage}%` }]} />
               </View>
-              <Text style={styles.confidenceText}>87%</Text>
+              <Text style={styles.confidenceText}>{confidencePercentage}%</Text>
             </View>
           </View>
 
-          {/* Suggested Actions */}
-          <Text style={styles.subTitle}>Suggested Actions:</Text>
-          <Text style={styles.description}>
-            1. Remove affected leaves promptly.{"\n"}
-            2. Use recommended fungicides.{"\n"}
-            3. Monitor other plants for early symptoms.
-          </Text>
+          {/* Suggested Actions (Only for Diseased Leaves) */}
+          {prediction == 0 && (
+            <>
+              <Text style={styles.subTitle}>Suggested Actions:</Text>
+              <Text style={styles.description}>
+                1. Remove affected leaves promptly.{"\n"}
+                2. Use recommended fungicides.{"\n"}
+                3. Monitor other plants for early symptoms.
+              </Text>
+            </>
+          )}
 
           {/* Navigation Button */}
           <TouchableOpacity
@@ -83,6 +106,7 @@ export default function LeafPredict() {
   );
 }
 
+// Styles
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -123,7 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 20,
-    backgroundColor: "rgba(124, 252, 0, 0.1)", // Light green background
+    backgroundColor: "rgba(124, 252, 0, 0.1)",
     padding: 15,
     borderRadius: 12,
     shadowColor: "#000",
@@ -151,6 +175,13 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 10,
     resizeMode: "cover",
+    backgroundColor: "#eee",
+  },
+  imagePlaceholder: {
+    fontSize: 14,
+    color: "#888",
+    textAlign: "center",
+    paddingVertical: 20,
   },
   explanationBox: {
     backgroundColor: "#E8F5E9",
@@ -228,3 +259,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+

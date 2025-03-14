@@ -9,9 +9,14 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from lime import lime_image
 from skimage.segmentation import mark_boundaries
 from PIL import Image
+from config import BACKEND_URL, UPLOAD_FOLDER, RESULTS_FOLDER  # Import config variables
 
 # Initialize Blueprint
 xai_bp = Blueprint('xai', __name__)
+
+# Ensure Directories Exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(RESULTS_FOLDER, exist_ok=True)
 
 # Load the trained model
 MODEL_PATH = os.path.join(os.getcwd(), "models", "mobilenetv2_model4.keras")
@@ -100,7 +105,7 @@ def explain_image():
         return jsonify({"error": "No image provided"}), 400
 
     file = request.files['file']
-    img_path = os.path.join("uploads/uploaded_images", file.filename)
+    img_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(img_path)
 
     img, img_array = preprocess_image(img_path)
@@ -112,17 +117,21 @@ def explain_image():
     gradcam_overlay = apply_colormap(gradcam_heatmap, img)
     lime_overlay = Image.fromarray((lime_heatmap * 255).astype(np.uint8))
 
-    # Save the images
-    gradcam_path = os.path.join("uploads/uploaded_images", f"gradcam_{file.filename}")
-    lime_path = os.path.join("uploads/uploaded_images", f"lime_{file.filename}")
+    # ✅ Save Grad-CAM and LIME images to results folder
+    gradcam_filename = f"gradcam_{file.filename}"
+    lime_filename = f"lime_{file.filename}"
+
+    gradcam_path = os.path.join(RESULTS_FOLDER, gradcam_filename)
+    lime_path = os.path.join(RESULTS_FOLDER, lime_filename)
 
     gradcam_overlay.save(gradcam_path)
     lime_overlay.save(lime_path)
 
+    # ✅ Return full image URLs
     return jsonify({
         "prediction": int(predicted_class),
         "confidence": float(confidence[0][predicted_class]),
-        "gradcam_path": gradcam_path,
-        "lime_path": lime_path,
+        "gradcam_path": f"{BACKEND_URL}{gradcam_path}",
+        "lime_path": f"{BACKEND_URL}{lime_path}",
         "explanation": explanation_text
     })
