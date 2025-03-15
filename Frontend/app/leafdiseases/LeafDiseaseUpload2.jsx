@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 
-export default function LeafDiseaseUpload() {
+export default function LeafDiseaseUpload2() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -29,12 +29,12 @@ export default function LeafDiseaseUpload() {
     let result;
     if (fromCamera) {
       result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ImagePicker.Images,
         quality: 1,
       });
     } else {
       result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ImagePicker.Images,
         quality: 1,
       });
     }
@@ -62,10 +62,10 @@ export default function LeafDiseaseUpload() {
     });
   
     try {
-      console.log("Submitting to:", API_URLS.EXPLAIN);
+      console.log("Submitting to:", API_URLS.EXPLAIN2);
       console.log("FormData:", formData);
   
-      const response = await fetch(API_URLS.EXPLAIN, {
+      const response = await fetch(API_URLS.EXPLAIN2, {
         method: "POST",
         body: formData,
         headers: {
@@ -73,13 +73,14 @@ export default function LeafDiseaseUpload() {
         },
       });
   
+      console.log("Response Status:", response.status);
       const data = await response.json();
       console.log("Upload Success:", data);
       setLoading(false);
   
       if (response.ok) {
         router.push({
-          pathname: "/leafdiseases/LeafPredict",
+          pathname: "/leafdiseases/LeafPredict2",
           params: {
             confidence: data.confidence,
             explanation: data.explanation,
@@ -126,11 +127,6 @@ export default function LeafDiseaseUpload() {
           >
             {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>Submit for Analysis</Text>}
           </TouchableOpacity>
-          <TouchableOpacity 
-                  style={styles.switchButton} 
-                  onPress={() => router.push("/leafdiseases/LeafDiseaseUpload2")}>
-                  <Text style={styles.switchButtonText}>Go to Leaf Disease Upload 2</Text>
-                </TouchableOpacity>
 
           {/* Modal for Upload Options */}
           <Modal transparent={true} animationType="fade" visible={modalVisible} onRequestClose={closeModal}>
@@ -150,7 +146,6 @@ export default function LeafDiseaseUpload() {
                 <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={closeModal}>
                   <Text style={[styles.modalButtonText, styles.cancelText]}>Cancel</Text>
                 </TouchableOpacity>
-               
               </View>
             </View>
           </Modal>
@@ -274,18 +269,5 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: "#555",
-  },
-  switchButton: {
-    padding: 15,
-    backgroundColor: "#3498db",
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  
-  switchButtonText: {
-    fontSize: 16,
-    color: "#fff",
-    fontWeight: "bold",
   },
 });

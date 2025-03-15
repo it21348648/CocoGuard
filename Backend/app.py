@@ -2,6 +2,7 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS
 from routes.super_res import super_res_bp  # Import the processing route
 from routes.xai import xai_bp
+from routes.xai2 import xai2_bp
 import os
 from config import UPLOAD_FOLDER, RESULTS_FOLDER  # Import config variables
 
@@ -17,6 +18,7 @@ os.makedirs(RESULTS_FOLDER, exist_ok=True)
 # Register Blueprints
 app.register_blueprint(super_res_bp, url_prefix='/api')
 app.register_blueprint(xai_bp, url_prefix='/api')
+app.register_blueprint(xai2_bp, url_prefix='/api')
 
 @app.route('/')
 def home():
