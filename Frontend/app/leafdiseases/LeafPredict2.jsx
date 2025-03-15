@@ -18,7 +18,7 @@ export default function LeafPredict2() {
   // ✅ Convert confidence to percentage
   const confidencePercentage = confidence ? (parseFloat(confidence) * 100).toFixed(2) : "0.00";
 
-  // ✅ Determine the disease label from explanation text
+  // ✅ Determine the disease label from explanation text - given in xai2
   let diseaseLabel;
   if (explanation.includes("healthy Leaf")) {
     diseaseLabel = "Healthy";
