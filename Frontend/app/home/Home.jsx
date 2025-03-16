@@ -79,12 +79,17 @@ export default function Home() {
           <Text style={styles.productPrice}>Scan</Text>
         </View>
         <View style={styles.productCard}>
+        <TouchableOpacity
+            style={styles.productCard}
+            onPress={() => router.push("/coconutMaturity/DashboardScreen")}
+          >
           <Image
             source={require("../assets/Maturity.jpg")}
             style={styles.productImage}
           />
           <Text style={styles.productName}>Maturity Level</Text>
           <Text style={styles.productPrice}>Scan</Text>
+          </TouchableOpacity>
         </View>
         {/* Add more product cards as needed */}
       </View>

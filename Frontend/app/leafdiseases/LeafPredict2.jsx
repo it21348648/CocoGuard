@@ -20,14 +20,14 @@ export default function LeafPredict2() {
 
   // ✅ Determine the disease label from explanation text - given in xai2
   let diseaseLabel;
-  if (explanation.includes("healthy Leaf")) {
+  if (explanation.includes("healthy leaf")) {
     diseaseLabel = "Healthy";
   } else if (explanation.includes("disease")) {
     diseaseLabel = "Grey Leaf";
   } else if (explanation.includes("not match coconut leaf")) {
     diseaseLabel = "Not a Coconut Leaf";
   } else {
-    diseaseLabel = "Uncertain";
+    diseaseLabel = "Healthy";
   }
 
   // ✅ Ensure Grad-CAM and LIME image paths are correct
