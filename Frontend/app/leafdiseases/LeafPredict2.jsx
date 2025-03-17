@@ -13,26 +13,19 @@ import { API_BASE_URL } from "../../constants/config"; // Import API Base URL
 
 export default function LeafPredict2() {
   const router = useRouter();
-  const { confidence, explanation, gradcamPath, limePath } = useLocalSearchParams();
+  const params = useLocalSearchParams();
 
-  // ✅ Convert confidence to percentage
-  const confidencePercentage = confidence ? (parseFloat(confidence) * 100).toFixed(2) : "0.00";
+  console.log("Received Params:", params); // 🔍 Debugging: Check received data
 
-  // ✅ Determine the disease label from explanation text - given in xai2
-  let diseaseLabel;
-  if (explanation.includes("healthy leaf")) {
-    diseaseLabel = "Healthy";
-  } else if (explanation.includes("disease")) {
-    diseaseLabel = "Grey Leaf";
-  } else if (explanation.includes("not match coconut leaf")) {
-    diseaseLabel = "Not a Coconut Leaf";
-  } else {
-    diseaseLabel = "Healthy";
-  }
+  // ✅ Extract relevant data
+  const gradcamImageUrl = params.gradcamPath?.startsWith("http") ? params.gradcamPath : `${API_BASE_URL}/results/${params.gradcamPath}`;
+  const limeImageUrl = params.limePath?.startsWith("http") ? params.limePath : `${API_BASE_URL}/results/${params.limePath}`;
 
-  // ✅ Ensure Grad-CAM and LIME image paths are correct
-  const gradcamImageUrl = gradcamPath?.startsWith("http") ? gradcamPath : `${API_BASE_URL}/results/${gradcamPath}`;
-  const limeImageUrl = limePath?.startsWith("http") ? limePath : `${API_BASE_URL}/results/${limePath}`;
+  // ✅ Extract prediction and explanation
+  const prediction = params.prediction || "Unknown";
+  const explanationData = params.explanation ? JSON.parse(params.explanation) : {};
+  const detectedRegions = explanationData.regions || [];
+  const explanationMessage = explanationData.message || "No explanation available.";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -44,52 +37,48 @@ export default function LeafPredict2() {
         </View>
 
         <View style={styles.content}>
-          {/* Image Comparison Section */}
-          <View style={styles.imageComparison}>
-            <View style={styles.imageBox}>
-              <Text style={styles.imageLabel}>Grad-Cam++ Image</Text>
-              {gradcamPath ? (
-                <Image source={{ uri: gradcamImageUrl }} style={styles.image} />
-              ) : (
-                <Text style={styles.imagePlaceholder}>No Image Available</Text>
-              )}
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.imageBox}>
-              <Text style={styles.imageLabel}>LIME Image</Text>
-              {limePath ? (
-                <Image source={{ uri: limeImageUrl }} style={styles.image} />
-              ) : (
-                <Text style={styles.imagePlaceholder}>No Image Available</Text>
-              )}
-            </View>
+          {/* Grad-CAM++ Image Section */}
+          <View style={styles.imageBox}>
+            <Text style={styles.imageLabel}>Grad-Cam++ Image</Text>
+            {params.gradcamPath ? (
+              <Image source={{ uri: gradcamImageUrl }} style={styles.imageLarge} />
+            ) : (
+              <Text style={styles.imagePlaceholder}>No Image Available</Text>
+            )}
+          </View>
+
+          {/* LIME Image Section */}
+          <View style={styles.imageBox}>
+            <Text style={styles.imageLabel}>LIME Image</Text>
+            {params.limePath ? (
+              <Image source={{ uri: limeImageUrl }} style={styles.imageLarge} />
+            ) : (
+              <Text style={styles.imagePlaceholder}>No Image Available</Text>
+            )}
           </View>
 
           {/* Detected Disease Section */}
           <View style={styles.explanationBox}>
             <Text style={[styles.diseaseDetected, 
-              { color: diseaseLabel === "Not a Coconut Leaf" ? "#FF6F6F" : "#4CAF50" }
+              { color: prediction === "Not a Coconut Leaf" ? "#FF6F6F" : "#4CAF50" }
             ]}>
-              Detected: <Text style={styles.diseaseName}>{diseaseLabel}</Text>
+              Detected: <Text style={styles.diseaseName}>{prediction}</Text>
             </Text>
 
-            {/* Confidence Score */}
-            <View style={styles.confidenceWrapper}>
-              <Text style={styles.confidenceText}>{confidencePercentage}% Confidence</Text>
-              <View style={styles.confidenceBarWrapper}>
-              <View style={styles.confidenceBar}>
-                <View style={[styles.confidenceBar, { width: `${confidencePercentage}%` }]} />
-                </View>
-              </View>
-            </View>
+            {/* Explanation dynamically generated */}
+            <View style={styles.explanationSection}>
+              <Text style={styles.subTitle}>Model Explanation:</Text>
+              <Text style={styles.description}>{explanationMessage}</Text>
 
-            {/* Explanation */}
-            {explanation && (
-              <View style={styles.explanationSection}>
-                <Text style={styles.subTitle}>Model Explanation:</Text>
-                <Text style={styles.description}>{explanation}</Text>
-              </View>
-            )}
+              {/* Display detected regions */}
+              {detectedRegions.length > 0 ? (
+                <Text style={styles.detectedRegions}>
+                  Highlighted Regions: {detectedRegions.join(", ")}
+                </Text>
+              ) : (
+                <Text style={styles.noRegionsText}>No significant regions detected.</Text>
+              )}
+            </View>
           </View>
 
           {/* Navigation Button */}
@@ -105,7 +94,7 @@ export default function LeafPredict2() {
   );
 }
 
-// ✅ Styles
+// ✅ Updated Styles
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -138,39 +127,20 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: "center",
   },
-  imageComparison: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-    backgroundColor: "rgba(124, 252, 0, 0.1)",
-    padding: 15,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
   imageBox: {
+    marginBottom: 20,
     alignItems: "center",
-  },
-  divider: {
-    width: 1,
-    height: "100%",
-    backgroundColor: "#ddd",
-    marginHorizontal: 10,
   },
   imageLabel: {
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 10,
   },
-  image: {
-    width: 150,
-    height: 150,
+  imageLarge: {
+    width: 280,
+    height: 280,
     borderRadius: 10,
-    resizeMode: "cover",
+    resizeMode: "contain",
     backgroundColor: "#eee",
   },
   imagePlaceholder: {
@@ -199,33 +169,6 @@ const styles = StyleSheet.create({
   diseaseName: {
     fontWeight: "bold",
   },
-  confidenceWrapper: {
-    width: "100%",
-    marginTop: 15,
-  },
-  confidenceBarWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  confidenceBar: {
-    flex: 1,
-    height: 12,
-    backgroundColor: "#ddd",
-    borderRadius: 6,
-    marginRight: 10,
-    overflow: "hidden",
-  },
-  confidenceFill: {
-    height: "100%",
-    backgroundColor: "#4CAF50",
-    borderRadius: 6,
-  },
-  confidenceText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#4CAF50",
-  },
   explanationSection: {
     marginTop: 15,
   },
@@ -238,6 +181,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
     marginBottom: 5,
+    textAlign: "center",
+  },
+  detectedRegions: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
+    marginTop: 5,
+  },
+  noRegionsText: {
+    fontSize: 14,
+    color: "#888",
+    textAlign: "center",
+    marginTop: 5,
   },
   navigationButton: {
     marginTop: 30,
@@ -245,6 +202,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50",
     borderRadius: 10,
     alignItems: "center",
+    width: "80%",
   },
   navigationButtonText: {
     color: "#fff",

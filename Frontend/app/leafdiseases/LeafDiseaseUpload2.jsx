@@ -51,20 +51,20 @@ export default function LeafDiseaseUpload2() {
       Alert.alert("No Image Selected", "Please upload an image first.");
       return;
     }
-  
+
     setLoading(true);
-  
+
     const formData = new FormData();
     formData.append("file", {
       uri: selectedImage,
       name: "testleaf.jpg",
       type: "image/jpeg",
     });
-  
+
     try {
       console.log("Submitting to:", API_URLS.EXPLAIN2);
       console.log("FormData:", formData);
-  
+
       const response = await fetch(API_URLS.EXPLAIN2, {
         method: "POST",
         body: formData,
@@ -72,18 +72,18 @@ export default function LeafDiseaseUpload2() {
           "Content-Type": "multipart/form-data",
         },
       });
-  
+
       console.log("Response Status:", response.status);
       const data = await response.json();
       console.log("Upload Success:", data);
       setLoading(false);
-  
+
       if (response.ok) {
         router.push({
           pathname: "/leafdiseases/LeafPredict2",
           params: {
-            confidence: data.confidence,
-            explanation: data.explanation,
+            prediction: data.prediction,
+            explanation: JSON.stringify(data.explanation), // 🔍 Ensure JSON object is converted to string
             gradcamPath: data.gradcam_path,
             limePath: data.lime_path,
           },
@@ -117,7 +117,9 @@ export default function LeafDiseaseUpload2() {
           </TouchableOpacity>
 
           {selectedImage && (
-            <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+            </View>
           )}
 
           <TouchableOpacity
@@ -155,6 +157,7 @@ export default function LeafDiseaseUpload2() {
   );
 }
 
+// ✅ Updated Styles
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -207,17 +210,26 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  previewImage: {
-    width: "100%",
-    height: 200,
-    borderRadius: 8,
+  imageContainer: {
+    borderWidth: 2,
+    borderColor: "#4CAF50",
+    borderRadius: 10,
+    padding: 5,
     marginBottom: 16,
+    alignItems: "center",
+  },
+  previewImage: {
+    width: 250,
+    height: 250,
+    borderRadius: 8,
   },
   submitButton: {
-    padding: 15,
-    backgroundColor: "#e74c3c",
+    padding: 12,
+    backgroundColor: "#007BFF", // Blue color
     borderRadius: 8,
     alignItems: "center",
+    width: "70%", // Reduced width
+    alignSelf: "center", // Centered on the screen
   },
   submitButtonText: {
     fontSize: 16,
@@ -271,3 +283,4 @@ const styles = StyleSheet.create({
     color: "#555",
   },
 });
+

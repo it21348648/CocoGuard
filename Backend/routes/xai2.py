@@ -54,7 +54,7 @@ def compute_gradcam(img_array, layer_name):
 
     with tf.GradientTape() as tape:
         conv_output, preds = grad_model(img_array)
-        class_idx = tf.argmax(preds[0]).numpy()  # Get the highest probability class
+        class_idx = int(tf.argmax(preds[0]).numpy())  # ✅ Convert np.int64 → int
         loss = preds[:, class_idx]
 
     grads = tape.gradient(loss, conv_output)
@@ -64,19 +64,19 @@ def compute_gradcam(img_array, layer_name):
     heatmap = np.maximum(heatmap, 0)
     heatmap = (heatmap - np.min(heatmap)) / (np.max(heatmap) + 1e-8)  # Normalize
 
-    return heatmap, int(class_idx), preds.numpy()
+    return heatmap, class_idx
 
 # ✅ Compute LIME for the detected class
 def compute_lime(img_array, img, predicted_class):
     explainer = lime_image.LimeImageExplainer()
-    
+
     def predict_fn(images):
         return model.predict(np.array(images))
 
     explanation = explainer.explain_instance(
         img_array[0].astype('double'),
         predict_fn,
-        top_labels=1,  # Only get explanation for predicted class
+        top_labels=1,
         hide_color=0,
         num_samples=1000
     )
@@ -87,21 +87,24 @@ def compute_lime(img_array, img, predicted_class):
 
     lime_heatmap = mark_boundaries(temp, mask)
 
-    # ✅ Generate explanation text per class
-    important_features = sorted(explanation.local_exp[predicted_class], key=lambda x: abs(x[1]), reverse=True)[:5]
-    
+    # ✅ Extract top 5 important regions and convert np.int64 → int
+    important_features = sorted(
+        explanation.local_exp[predicted_class], key=lambda x: abs(x[1]), reverse=True
+    )[:5]
+    detected_regions = [int(feat[0]) for feat in important_features]  # ✅ Convert np.int64 → int
+
+    # ✅ Ensure the JSON response is properly formatted
     if predicted_class == 1:  # Healthy Leaf
-        explanation_text = "\n".join(
-            [f"Region {feat[0]} has characteristics of a healthy leaf." for feat in important_features]
-        )
+        message = "These regions have characteristics of a healthy leaf."
     elif predicted_class == 0:  # Grey Leaf Disease
-        explanation_text = "\n".join(
-            [f"Region {feat[0]} contributes significantly to disease patterns." for feat in important_features]
-        )
+        message = "These regions contribute significantly to disease patterns."
     else:  # Not a Coconut Leaf
-        explanation_text = "\n".join(
-            [f"Region {feat[0]} does not match coconut leaf characteristics." for feat in important_features]
-        )
+        message = "These regions do not match coconut leaf characteristics."
+
+    explanation_text = {
+        "regions": detected_regions,
+        "message": message
+    }
 
     return lime_heatmap, explanation_text
 
@@ -123,17 +126,22 @@ def explain_image():
     img_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(img_path)
 
+    print(f"📷 Image saved: {img_path}")
+
     img, img_array = preprocess_image(img_path)
 
     last_conv_layer = get_last_conv_layer(model)
-    gradcam_heatmap, predicted_class, confidence = compute_gradcam(img_array, last_conv_layer)
+    gradcam_heatmap, predicted_class = compute_gradcam(img_array, last_conv_layer)
 
     # Compute LIME explanation for the predicted class
-    lime_heatmap, explanation_text = compute_lime(img_array, img, predicted_class)
+    lime_heatmap, explanation_data = compute_lime(img_array, img, predicted_class)
+
+    print(f"🔍 Predicted Class: {CLASS_LABELS[predicted_class]}")
+    print(f"📊 Explanation Data: {explanation_data}")
 
     # Generate overlay images
     gradcam_overlay = apply_colormap(gradcam_heatmap, img)
-    lime_overlay = Image.fromarray((lime_heatmap * 255).astype(np.uint8))
+    lime_overlay = Image.fromarray((lime_heatmap * 255).astype(np.uint8), mode="RGB")
 
     # ✅ Save Grad-CAM and LIME images
     gradcam_filename = f"gradcam_{file.filename}"
@@ -145,11 +153,16 @@ def explain_image():
     gradcam_overlay.save(gradcam_path)
     lime_overlay.save(lime_path)
 
-    # ✅ Return full image URLs and detected class
-    return jsonify({
-        "prediction": predicted_class,
-        "confidence": float(confidence[0][predicted_class]),
+    print(f"✅ Images saved at: {gradcam_path} & {lime_path}")
+
+    # ✅ Return structured JSON
+    response = {
+        "prediction": CLASS_LABELS[predicted_class],  # Use label instead of number
         "gradcam_path": f"{BACKEND_URL}/results/{gradcam_filename}",
         "lime_path": f"{BACKEND_URL}/results/{lime_filename}",
-        "explanation": explanation_text
-    })
+        "explanation": explanation_data  # ✅ Now JSON serializable
+    }
+    
+    print(f"📤 Sending API Response: {response}")
+    
+    return jsonify(response)

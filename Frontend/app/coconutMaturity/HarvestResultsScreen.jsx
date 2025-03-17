@@ -2,11 +2,20 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import moment from "moment"; // Import moment.js for date calculations
 
 export default function HarvestResultsScreen() {
   const router = useRouter();
-  const { imageUri, prediction, predictedDays } = useLocalSearchParams(); // CONFIDENCE REMOVED
+  const { imageUri, prediction, predictedDays } = useLocalSearchParams();
   console.log("📡 Received params in HarvestResultsScreen:", { imageUri, prediction, predictedDays });
+
+  // Get today's date (when the image was uploaded)
+  const todayDate = moment(); // Current date
+  const predictedDate = todayDate.clone().add(predictedDays, "days"); // Add predicted days
+
+  // Define the optimal harvest period (-5 days, +5 days)
+  const optimalStartDate = predictedDate.clone().subtract(5, "days");
+  const optimalEndDate = predictedDate.clone().add(5, "days");
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -29,9 +38,23 @@ export default function HarvestResultsScreen() {
           <Text style={styles.predictedText}>{predictedDays} days</Text>
         </View>
 
+        {/* Optimal Harvest Period */}
+        <View style={styles.resultBox}>
+          <Text style={styles.resultTitle}>Optimal Harvest Period</Text>
+          <Text style={styles.optimalHarvestText}>
+            {optimalStartDate.format("MMMM D, YYYY")} – {optimalEndDate.format("MMMM D, YYYY")}
+          </Text>
+          <Text style={styles.harvestNote}>Harvest within this period for the best results.</Text>
+        </View>
+
         <TouchableOpacity style={styles.backButton} onPress={() => router.push("/coconutMaturity/DashboardScreen")}>
           <Text style={styles.backButtonText}>Back to Dashboard</Text>
         </TouchableOpacity>
+
+        {/* Disclaimer Note */}
+        <Text style={styles.noteText}>
+          Prediction based on provided data. Results may vary.
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -52,8 +75,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "90%",
     marginBottom: 15,
-    elevation: 2, // Shadow effect for Android
-    shadowColor: "#000", // Shadow effect for iOS
+    elevation: 2,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -61,6 +84,8 @@ const styles = StyleSheet.create({
   resultTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 5, color: "#555" },
   resultText: { fontSize: 20, fontWeight: "bold", color: "#007BFF" },
   predictedText: { fontSize: 22, fontWeight: "bold", color: "#28A745" },
+  optimalHarvestText: { fontSize: 20, fontWeight: "bold", color: "#FF9800" },
+  harvestNote: { fontSize: 14, color: "#666", marginTop: 5, textAlign: "center" },
   backButton: {
     backgroundColor: "#007BFF",
     padding: 15,
@@ -70,4 +95,5 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   backButtonText: { fontSize: 18, color: "#fff", fontWeight: "bold" },
+  noteText: { fontSize: 14, color: "#777", marginTop: 20, textAlign: "center" },
 });
