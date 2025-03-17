@@ -59,7 +59,7 @@ export default function Home() {
       <View style={styles.productCard}>
         <TouchableOpacity
             style={styles.productCard}
-            onPress={() => router.push("/leafdiseases/LeafDiseaseUpload")}
+            onPress={() => router.push("/leafdiseases/LeafDiseaseUpload2")}
           >
             <Image
               source={require("../assets/Coconut Leafe.jpg")}

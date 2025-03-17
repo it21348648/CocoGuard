@@ -11,7 +11,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { API_URLS } from "../../constants/config"; // Ensure API URL is imported
+import { API_URLS } from "../../constants/config";
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -45,7 +45,7 @@ export default function DashboardScreen() {
     setLoading(true);
     let filename = imageUri.split("/").pop();
     let match = /\.(\w+)$/.exec(filename);
-    let type = match ? `image/${match[1]}` : `image/jpeg`; // Default to jpeg if unknown
+    let type = match ? `image/${match[1]}` : `image/jpeg`;
 
     let formData = new FormData();
     formData.append("file", {
@@ -85,13 +85,18 @@ export default function DashboardScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <Image source={require("../assets/dashboard-background1.jpg")} style={styles.headerBackground} />
-        <Text style={styles.title}>Dashboard</Text>
+        <Text style={styles.title}>Check Maturity Status</Text>
       </View>
 
       {/* Upload Image Button */}
       <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
         <Text style={styles.uploadButtonText}>Upload Image from Gallery</Text>
       </TouchableOpacity>
+
+      {/* Instruction Text */}
+      <Text style={styles.instructionText}>
+        To get an accurate prediction, upload a photo of a coconut that looks like most coconuts on your trees right now.
+      </Text>
 
       {/* Loading Indicator */}
       {loading && <ActivityIndicator size="large" color="#4CAF50" style={{ marginTop: 20 }} />}
@@ -112,28 +117,26 @@ export default function DashboardScreen() {
 
           {/* Show Form Button When Prediction is "Young" or "Mature" */}
           {["Young", "Mature"].includes(prediction.prediction) && (
-          <TouchableOpacity
-            style={styles.formButton}
-            onPress={() => {
-              console.log("📡 Navigating to HarvestInputScreen with:", {
-                imageUri: selectedImage,
-                prediction: prediction.prediction,
-                confidence: prediction.confidence ? (prediction.confidence * 100).toFixed(2) : "N/A",
-              });
-
-              router.push({
-                pathname: "/coconutMaturity/HarvestInputScreen",
-                params: {
+            <TouchableOpacity
+              style={styles.formButton}
+              onPress={() => {
+                console.log("📡 Navigating to HarvestInputScreen with:", {
                   imageUri: selectedImage,
                   prediction: prediction.prediction,
-                  confidence: prediction.confidence ? (prediction.confidence * 100).toFixed(2) : "0", // Default to "0"
-                },
-              });
-            }}
-          >
-            <Text style={styles.formButtonText}>Provide Harvest Details</Text>
-          </TouchableOpacity>
-        )}
+                });
+
+                router.push({
+                  pathname: "/coconutMaturity/HarvestInputScreen",
+                  params: {
+                    imageUri: selectedImage,
+                    prediction: prediction.prediction, // Do NOT pass confidence
+                  },
+                });
+              }}
+            >
+              <Text style={styles.formButtonText}>Provide Harvest Details</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </SafeAreaView>
@@ -144,9 +147,16 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#f9f9f9" },
   header: { height: 250, justifyContent: "center", alignItems: "center", position: "relative" },
   headerBackground: { width: "100%", height: "100%", position: "absolute", resizeMode: "cover" },
-  title: { fontSize: 50, fontWeight: "bold", color: "#fff", textAlign: "center" },
+  title: { fontSize: 32, fontWeight: "bold", color: "#fff", textAlign: "center" },
   uploadButton: { backgroundColor: "#4CAF50", padding: 15, borderRadius: 12, margin: 16, alignItems: "center" },
   uploadButtonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  instructionText: {
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginHorizontal: 20,
+    marginTop: 10,
+  },
   previewImage: { width: 200, height: 200, alignSelf: "center", marginTop: 20, borderRadius: 10 },
   predictionContainer: { alignItems: "center", marginTop: 20 },
   predictionText: { fontSize: 18, fontWeight: "bold", color: "#4CAF50" },

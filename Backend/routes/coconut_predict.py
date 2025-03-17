@@ -91,18 +91,24 @@ def predict_harvest():
       - No. of Trees
       - Three previous harvest dates
       - No. of coconuts plucked for each harvest
+      - Maturity prediction result (Young or Mature)
     """
     try:
         data = request.get_json()
 
+        print("📥 Received Prediction Request:", data)  # Debugging
+
+        # Extracting maturity prediction
+        maturity_prediction = data.get("prediction", "Unknown")
+        
         # Convert dates to datetime format
-        harvest_date_1 = datetime.strptime(data["Harvest Date 1"], "%Y-%m-%d")
-        harvest_date_2 = datetime.strptime(data["Harvest Date 2"], "%Y-%m-%d")
-        harvest_date_3 = datetime.strptime(data["Harvest Date 3"], "%Y-%m-%d")
+        oldest_harvest = datetime.strptime(data["Harvest Date 1"], "%Y-%m-%d")
+        second_oldest_harvest = datetime.strptime(data["Harvest Date 2"], "%Y-%m-%d")
+        latest_harvest = datetime.strptime(data["Harvest Date 3"], "%Y-%m-%d")
 
         # Calculate intervals
-        days_between_1_2 = (harvest_date_2 - harvest_date_1).days
-        days_between_2_3 = (harvest_date_3 - harvest_date_2).days
+        days_between_1_2 = (second_oldest_harvest - oldest_harvest).days
+        days_between_2_3 = (latest_harvest - second_oldest_harvest).days
         avg_harvest_interval = (days_between_1_2 + days_between_2_3) / 2
 
         # Calculate average coconuts per tree
@@ -120,7 +126,7 @@ def predict_harvest():
 
         # Prepare data for model
         processed_data = pd.DataFrame({
-            "Location": [data["Location"]],  # Add location
+            "Location": [data["Location"]],  
             "No. of Trees": [data["No. of Trees"]],
             "Days Between 1 & 2": [days_between_1_2],
             "Days Between 2 & 3": [days_between_2_3],
@@ -133,9 +139,21 @@ def predict_harvest():
         predicted_days = harvest_model.predict(processed_data)[0]
         rounded_predicted_days = round(predicted_days)  # Round off to nearest whole number
 
-        return jsonify({
-            "Predicted Days Until Next Harvest": rounded_predicted_days
-        })
+        # Adjust prediction if the coconut is "Mature"
+        if maturity_prediction == "Mature":
+            adjusted_days = max(rounded_predicted_days - 40, 10)  # Reduce by 10 but ensure min 5 days
+            print(f"🌴 Adjusted harvest prediction for MATURE coconut: {adjusted_days} days.")
+        else:
+            adjusted_days = rounded_predicted_days
+
+        # Return response
+        response_data = {
+            "Predicted Days Until Next Harvest": adjusted_days
+        }
+
+        print(f"📡 Final Prediction Response: {response_data}")  # Debugging
+        return jsonify(response_data)
 
     except Exception as e:
+        print("❌ Error in predict_harvest:", str(e))  # Debug log
         return jsonify({"error": str(e)}), 500

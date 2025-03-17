@@ -5,32 +5,31 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 
 export default function HarvestResultsScreen() {
   const router = useRouter();
-  // Retrieve parameters passed from HarvestInputScreen
-  const { imageUri, prediction, confidence = "0", predictedDays = "N/A" } = useLocalSearchParams();
-  console.log("📡 Received params in HarvestResultsScreen:", { imageUri, prediction, confidence, predictedDays });
+  const { imageUri, prediction, predictedDays } = useLocalSearchParams(); // CONFIDENCE REMOVED
+  console.log("📡 Received params in HarvestResultsScreen:", { imageUri, prediction, predictedDays });
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.title}>Harvest Prediction Results</Text>
 
-        {/* Display Uploaded Image */}
-        {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+        {imageUri ? (
+          <Image source={{ uri: imageUri }} style={styles.image} />
+        ) : (
+          <Text style={styles.placeholderText}>No Image Available</Text>
+        )}
 
-        {/* Prediction Result */}
         <View style={styles.resultBox}>
-          <Text style={styles.resultText}>Prediction: {prediction}</Text>
-          <Text style={styles.resultText}>Confidence: {confidence}%</Text>
+          <Text style={styles.resultTitle}>Coconut Maturity</Text>
+          <Text style={styles.resultText}>{prediction}</Text>
         </View>
 
-        {/* Predicted Harvest Days */}
         <View style={styles.resultBox}>
-          <Text style={styles.resultTitle}>Predicted Harvest</Text>
+          <Text style={styles.resultTitle}>Predicted Harvest in</Text>
           <Text style={styles.predictedText}>{predictedDays} days</Text>
         </View>
 
-        {/* Back to Dashboard Button */}
-        <TouchableOpacity style={styles.backButton} onPress={() => router.push("/")}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.push("/coconutMaturity/DashboardScreen")}>
           <Text style={styles.backButtonText}>Back to Dashboard</Text>
         </TouchableOpacity>
       </View>
@@ -41,8 +40,9 @@ export default function HarvestResultsScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#f9f9f9" },
   container: { flex: 1, padding: 20, alignItems: "center" },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20, color: "#333" },
   image: { width: 250, height: 250, borderRadius: 10, marginBottom: 20 },
+  placeholderText: { fontSize: 16, color: "#888", marginBottom: 20 },
   resultBox: {
     backgroundColor: "#fff",
     padding: 15,
@@ -52,9 +52,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "90%",
     marginBottom: 15,
+    elevation: 2, // Shadow effect for Android
+    shadowColor: "#000", // Shadow effect for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  resultText: { fontSize: 18, fontWeight: "bold", color: "#007BFF" },
-  resultTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 5 },
+  resultTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 5, color: "#555" },
+  resultText: { fontSize: 20, fontWeight: "bold", color: "#007BFF" },
   predictedText: { fontSize: 22, fontWeight: "bold", color: "#28A745" },
   backButton: {
     backgroundColor: "#007BFF",

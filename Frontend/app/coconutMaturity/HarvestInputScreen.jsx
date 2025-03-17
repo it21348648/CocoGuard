@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  Image,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,9 +16,8 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 
 export default function HarvestInputScreen() {
   const router = useRouter();
-  // Retrieve parameters passed from DashboardScreen
-  const { imageUri, prediction, confidence = "0" } = useLocalSearchParams();
-  console.log("📡 Received params in HarvestInputScreen:", { imageUri, prediction, confidence });
+  const { imageUri, prediction } = useLocalSearchParams(); 
+  console.log("📡 Received params in HarvestInputScreen:", { imageUri, prediction });
 
   const [location, setLocation] = useState(""); 
   const [numTrees, setNumTrees] = useState("");
@@ -26,7 +26,12 @@ export default function HarvestInputScreen() {
   const [coconuts, setCoconuts] = useState(["", "", ""]);
   const [loading, setLoading] = useState(false);
 
-  // Handle Date Selection
+  const getLabel = (index) => {
+    if (index === 0) return "Oldest Harvest Date";
+    if (index === 1) return "Second Oldest Harvest Date";
+    return "Latest Harvest Date";
+  };
+
   const handleDateChange = (event, selectedDate, index) => {
     setShowDatePicker([false, false, false]);
     if (selectedDate) {
@@ -36,7 +41,6 @@ export default function HarvestInputScreen() {
     }
   };
 
-  // Handle Form Submission
   const submitData = async () => {
     if (!location || !numTrees || harvestDates.some(date => date === null) || coconuts.some(c => !c)) {
       Alert.alert("Error", "Please fill in all fields.");
@@ -53,6 +57,7 @@ export default function HarvestInputScreen() {
       "Coconuts Plucked 1": parseInt(coconuts[0]),
       "Coconuts Plucked 2": parseInt(coconuts[1]),
       "Coconuts Plucked 3": parseInt(coconuts[2]),
+      "prediction": prediction
     };
   
     setLoading(true);
@@ -67,13 +72,11 @@ export default function HarvestInputScreen() {
       console.log("✅ Prediction Response:", result);
   
       if (response.ok) {
-        // Navigate to HarvestResultsScreen
         router.push({
             pathname: "/coconutMaturity/HarvestResultsScreen",
             params: {
               imageUri: imageUri || "", 
               prediction: prediction || "Unknown",
-              confidence: confidence || "0",
               predictedDays: result["Predicted Days Until Next Harvest"] || "N/A",
             },
           });
@@ -91,9 +94,13 @@ export default function HarvestInputScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Add New Record</Text>
+        {/* Background Image with Title */}
+        <View style={styles.header}>
+          <Image source={require("../assets/dashboard-background1.jpg")} style={styles.headerBackground} />
+          <Text style={styles.title}>Add Record</Text>
+        </View>
 
-        {/* Location Selection - Using TouchableOpacity */}
+        {/* Location Selection - FIXED */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Select Location</Text>
           <View style={styles.radioContainer}>
@@ -121,16 +128,22 @@ export default function HarvestInputScreen() {
             style={styles.input}
             keyboardType="numeric"
             placeholder="Enter number of trees"
+            placeholderTextColor="#777"
             value={numTrees}
             onChangeText={setNumTrees}
           />
         </View>
 
+        {/* Instructional Text */}
+        <Text style={styles.instructionText}>
+          To get an accurate prediction, enter the last three harvest dates in order.
+        </Text>
+
         {/* Harvest Records */}
         <Text style={styles.sectionTitle}>Past Harvest Records</Text>
         {harvestDates.map((date, index) => (
           <View key={index} style={styles.recordContainer}>
-            <Text style={styles.recordTitle}>Record {index + 1}</Text>
+            <Text style={styles.recordTitle}>{getLabel(index)}</Text>
 
             {/* Date Picker */}
             <TouchableOpacity
@@ -138,7 +151,7 @@ export default function HarvestInputScreen() {
               onPress={() => setShowDatePicker([index === 0, index === 1, index === 2])}
             >
               <Text style={styles.datePickerText}>
-                {date ? date.toDateString() : "Select Date of Harvest"}
+                {date ? date.toDateString() : "📅 Select Harvest Date"}
               </Text>
             </TouchableOpacity>
 
@@ -156,6 +169,7 @@ export default function HarvestInputScreen() {
               style={styles.input}
               keyboardType="numeric"
               placeholder="Number of Coconuts"
+              placeholderTextColor="#777"
               value={coconuts[index]}
               onChangeText={(value) => {
                 const updatedCoconuts = [...coconuts];
@@ -180,55 +194,18 @@ export default function HarvestInputScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#f9f9f9" },
   scrollContainer: { padding: 20 },
-  title: { fontSize: 28, fontWeight: "bold", textAlign: "center", marginBottom: 20 },
-  inputContainer: { marginBottom: 15 },
-  label: { fontSize: 16, fontWeight: "bold", marginBottom: 5 },
-  radioContainer: { flexDirection: "row", justifyContent: "space-around", marginBottom: 10 },
-  radioButton: {
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#007BFF",
-    backgroundColor: "#fff",
-    width: 100,
-    alignItems: "center",
-  },
-  radioButtonSelected: {
-    backgroundColor: "#007BFF",
-  },
+  header: { height: 200, justifyContent: "center", alignItems: "center", position: "relative" },
+  headerBackground: { width: "100%", height: "100%", position: "absolute", resizeMode: "cover" },
+  title: { fontSize: 28, fontWeight: "bold", color: "#fff", textAlign: "center" },
+  instructionText: { fontSize: 16, color: "#555", textAlign: "center", marginVertical: 10, paddingHorizontal: 15 },
+  radioContainer: { flexDirection: "row", justifyContent: "space-between", marginBottom: 15 },
+  radioButton: { padding: 12, borderRadius: 8, borderWidth: 1, borderColor: "#007BFF", width: 110, alignItems: "center" },
+  radioButtonSelected: { backgroundColor: "#007BFF" },
   radioText: { fontSize: 16, color: "#007BFF" },
   radioTextSelected: { fontSize: 16, color: "#fff", fontWeight: "bold" },
-  input: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginTop: 20, marginBottom: 10 },
-  recordContainer: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  recordTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 5 },
-  datePickerButton: {
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  datePickerText: { fontSize: 16, color: "#333" },
-  submitButton: {
-    backgroundColor: "#007BFF",
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
-    alignItems: "center",
-  },
+  input: { height: 50, backgroundColor: "#fff", borderRadius: 10, paddingHorizontal: 12, fontSize: 18, borderWidth: 1, borderColor: "#ddd", color: "#333" },
+  datePickerButton: { backgroundColor: "#ffffff", borderWidth: 1, borderColor: "#007BFF", padding: 12, borderRadius: 10, alignItems: "center" },
+  datePickerText: { fontSize: 16, color: "#007BFF", fontWeight: "bold" },
+  submitButton: { backgroundColor: "#007BFF", padding: 15, borderRadius: 10, marginTop: 20, alignItems: "center" },
   submitButtonText: { fontSize: 18, color: "#fff", fontWeight: "bold" },
 });
