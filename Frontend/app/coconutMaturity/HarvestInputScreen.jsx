@@ -40,7 +40,7 @@ export default function HarvestInputScreen() {
       Alert.alert("Error", "Please fill in all fields.");
       return;
     }
-
+  
     const formattedDates = harvestDates.map(date => date.toISOString().split("T")[0]);
     const formData = {
       Location: location,
@@ -52,18 +52,26 @@ export default function HarvestInputScreen() {
       "Coconuts Plucked 2": parseInt(coconuts[1]),
       "Coconuts Plucked 3": parseInt(coconuts[2]),
     };
-
+  
     setLoading(true);
     try {
+      console.log("📡 Sending request to:", API_URLS.PREDICT);
+      console.log("📤 Form Data:", formData);
+  
       let response = await fetch(API_URLS.PREDICT, {
         method: "POST",
         body: JSON.stringify(formData),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
       });
-
+  
+      console.log("📥 Response received:", response);
+  
       let result = await response.json();
-      console.log("Prediction Response:", result);
-
+      console.log("✅ Prediction Response:", result);
+  
       if (response.ok) {
         Alert.alert(
           "Success",
@@ -74,6 +82,7 @@ export default function HarvestInputScreen() {
         throw new Error(result.error || "Failed to predict harvest.");
       }
     } catch (error) {
+      console.error("❌ Fetch Error:", error);
       Alert.alert("Error", error.message);
     } finally {
       setLoading(false);

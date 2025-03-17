@@ -4,4 +4,5 @@ export const API_URLS = {
   EXPLAIN: `${API_BASE_URL}/api/explain`,
   EXPLAIN2: `${API_BASE_URL}/api/explain2`,
   CLASSIFY: `${API_BASE_URL}/api/classify`,
+  PREDICT: `${API_BASE_URL}/api/predict`,
 };
