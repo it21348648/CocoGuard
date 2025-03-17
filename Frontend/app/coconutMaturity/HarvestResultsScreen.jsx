@@ -5,7 +5,9 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 
 export default function HarvestResultsScreen() {
   const router = useRouter();
-  const { imageUri, prediction, confidence, predictedDays } = useLocalSearchParams();
+  // Retrieve parameters passed from HarvestInputScreen
+  const { imageUri, prediction, confidence = "0", predictedDays = "N/A" } = useLocalSearchParams();
+  console.log("📡 Received params in HarvestResultsScreen:", { imageUri, prediction, confidence, predictedDays });
 
   return (
     <SafeAreaView style={styles.safeArea}>

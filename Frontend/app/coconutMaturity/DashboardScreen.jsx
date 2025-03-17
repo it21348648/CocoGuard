@@ -112,18 +112,28 @@ export default function DashboardScreen() {
 
           {/* Show Form Button When Prediction is "Young" or "Mature" */}
           {["Young", "Mature"].includes(prediction.prediction) && (
-            <TouchableOpacity
-              style={styles.formButton}
-              onPress={() =>
-                router.push({
-                  pathname: "/coconutMaturity/HarvestInputScreen",
-                  params: { prediction: prediction.prediction }, // Pass data to next screen
-                })
-              }
-            >
-              <Text style={styles.formButtonText}>Provide Harvest Details</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            style={styles.formButton}
+            onPress={() => {
+              console.log("📡 Navigating to HarvestInputScreen with:", {
+                imageUri: selectedImage,
+                prediction: prediction.prediction,
+                confidence: prediction.confidence ? (prediction.confidence * 100).toFixed(2) : "N/A",
+              });
+
+              router.push({
+                pathname: "/coconutMaturity/HarvestInputScreen",
+                params: {
+                  imageUri: selectedImage,
+                  prediction: prediction.prediction,
+                  confidence: prediction.confidence ? (prediction.confidence * 100).toFixed(2) : "0", // Default to "0"
+                },
+              });
+            }}
+          >
+            <Text style={styles.formButtonText}>Provide Harvest Details</Text>
+          </TouchableOpacity>
+        )}
         </View>
       )}
     </SafeAreaView>

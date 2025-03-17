@@ -15,7 +15,9 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 
 export default function HarvestInputScreen() {
   const router = useRouter();
-  const { prediction } = useLocalSearchParams(); 
+  // Retrieve parameters passed from DashboardScreen
+  const { imageUri, prediction, confidence = "0" } = useLocalSearchParams();
+  console.log("📡 Received params in HarvestInputScreen:", { imageUri, prediction, confidence });
 
   const [location, setLocation] = useState(""); 
   const [numTrees, setNumTrees] = useState("");
@@ -55,29 +57,26 @@ export default function HarvestInputScreen() {
   
     setLoading(true);
     try {
-      console.log("📡 Sending request to:", API_URLS.PREDICT);
-      console.log("📤 Form Data:", formData);
-  
       let response = await fetch(API_URLS.PREDICT, {
         method: "POST",
         body: JSON.stringify(formData),
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
-  
-      console.log("📥 Response received:", response);
   
       let result = await response.json();
       console.log("✅ Prediction Response:", result);
   
       if (response.ok) {
-        Alert.alert(
-          "Success",
-          `Predicted Harvest in ${result["Predicted Days Until Next Harvest"]} days.`
-        );
-        router.back();
+        // Navigate to HarvestResultsScreen
+        router.push({
+            pathname: "/coconutMaturity/HarvestResultsScreen",
+            params: {
+              imageUri: imageUri || "", 
+              prediction: prediction || "Unknown",
+              confidence: confidence || "0",
+              predictedDays: result["Predicted Days Until Next Harvest"] || "N/A",
+            },
+          });
       } else {
         throw new Error(result.error || "Failed to predict harvest.");
       }
