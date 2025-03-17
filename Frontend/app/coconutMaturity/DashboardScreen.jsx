@@ -10,9 +10,11 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {API_URLS} from "../../constants/config"; // Ensure API URL is imported
+import { useRouter } from "expo-router";
+import { API_URLS } from "../../constants/config"; // Ensure API URL is imported
 
 export default function DashboardScreen() {
+  const router = useRouter();
   const [selectedImage, setSelectedImage] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -21,7 +23,7 @@ export default function DashboardScreen() {
   const pickImage = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images, // Only allow image selection
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
@@ -107,6 +109,21 @@ export default function DashboardScreen() {
             </Text>
           )}
           {prediction.message && <Text style={styles.predictionMessage}>{prediction.message}</Text>}
+
+          {/* Show Form Button When Prediction is "Young" or "Mature" */}
+          {["Young", "Mature"].includes(prediction.prediction) && (
+            <TouchableOpacity
+              style={styles.formButton}
+              onPress={() =>
+                router.push({
+                  pathname: "/coconutMaturity/HarvestInputScreen",
+                  params: { prediction: prediction.prediction }, // Pass data to next screen
+                })
+              }
+            >
+              <Text style={styles.formButtonText}>Provide Harvest Details</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </SafeAreaView>
@@ -124,4 +141,6 @@ const styles = StyleSheet.create({
   predictionContainer: { alignItems: "center", marginTop: 20 },
   predictionText: { fontSize: 18, fontWeight: "bold", color: "#4CAF50" },
   predictionMessage: { fontSize: 16, color: "#555", marginTop: 10 },
+  formButton: { backgroundColor: "#007BFF", padding: 12, borderRadius: 10, marginTop: 20 },
+  formButtonText: { color: "#fff", fontSize: 18, fontWeight: "bold", textAlign: "center" },
 });
