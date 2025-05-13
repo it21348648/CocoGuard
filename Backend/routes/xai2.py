@@ -19,7 +19,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(RESULTS_FOLDER, exist_ok=True)
 
 # Load the trained model
-MODEL_PATH = os.path.join(os.getcwd(), "models", "maxmobilenetv2_model1.keras")
+MODEL_PATH = os.path.join(os.getcwd(), "models", "newmobilenetv2_model2.keras")
 model = load_model(MODEL_PATH)
 model.trainable = False
 
